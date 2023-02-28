@@ -2,7 +2,9 @@ version: '3'
 
 services:
   database:
-    build: .
+    build:
+      context: ./Database
+      dockerfile: Dockerfile
     ports:
       - "3306:3306"
     volumes:
