@@ -1,4 +1,4 @@
-FROM mysql:latest
+FROM mysql-server:latest
 #probably want to set this to a specific version so we dont run into errors.
 
 # Set the root password for MySQL
