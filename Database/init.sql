@@ -1,5 +1,12 @@
 CREATE TABLE users (
-  id INT(11) NOT NULL AUTO_INCREMENT,
-  name VARCHAR(50) NOT NULL,
+  id INT NOT NULL AUTO_INCREMENT,
+  Username VARCHAR(255) NOT NULL,
+  SpotifyID VARCHAR(255) NOT NULL,
+  Latitude FLOAT(10,6) NOT NULL,
+  Longitude FLOAT(10,6) NOT NULL,
+  CurrentSong VARCHAR(255),
+  CurrentArtist VARCHAR(255),
+  locationID INT NOT NULL,
   PRIMARY KEY (id)
 );
+
