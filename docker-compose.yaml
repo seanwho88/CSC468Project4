@@ -22,7 +22,7 @@ services:
     ports:
       - "5000:5000"
     environment:
-      DB_HOST: database
+      DB_HOST: docker.mikec123-149382.cloud-edu.emulab.net
       DB_PORT: 3306
       DB_USER: user
       DB_PASSWORD: 123
