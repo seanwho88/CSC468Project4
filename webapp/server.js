@@ -1,6 +1,6 @@
 const http = require('http');
 
-const hostname = 'docker.mikec123-149438.cloud-edu.emulab.net';
+const hn = 'docker.mikec123-149438.cloud-edu.emulab.net';
 const port = 3000;
 
 const server = http.createServer((req, res) => {
@@ -10,5 +10,5 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(port, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
+  console.log(`Server running at http://${hn}:${port}/`);
 });
