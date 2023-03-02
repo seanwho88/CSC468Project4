@@ -1,6 +1,6 @@
 const http = require('http');
 
-const hn = 'docker.mikec123-149438.cloud-edu.emulab.net';
+const hn = 'hostname';
 const port = 3000;
 
 const server = http.createServer((req, res) => {
