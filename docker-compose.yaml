@@ -31,5 +31,6 @@ services:
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
+    restart: on-failure:3
     depends_on:
       - database
