@@ -17,3 +17,10 @@ while not connected:
         time.sleep(5)
 
 print("Connected to database:", mydb)
+
+endTime = time.time() + 15
+while True:
+  if(endTime<time.time()):
+    print("Time is: " + str(time.time()))
+    endTime = time.time() + 15
+
