@@ -20,7 +20,7 @@ mycursor = mydb.cursor()
 for i in range(25):
     #generate random string
     N = 10
-    rstr = ''.join(random.choices(string.ascii_uppercase + string.digits, K=N)
+    rstr = ''.join(random.choices(string.ascii_uppercase + string.digits, K=N))
   
     # generate a random name and age
     uid = i
