@@ -1,5 +1,6 @@
 import mysql.connector
 import random
+import string
 
 # connect to the database
 mydb = mysql.connector.connect(
