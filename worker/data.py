@@ -7,7 +7,7 @@ mydb = mysql.connector.connect(
   user="user",
   password="123",
   port="3306",
-  database="yourdatabase"
+  database="database"
 )
 
 # create a cursor object
