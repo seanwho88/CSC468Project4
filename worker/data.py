@@ -25,7 +25,7 @@ for i in range(25):
     # generate a random name and age
     uid = i
     uname = "user " +str(i+1)
-    spotid = "user " str(i+1)
+    spotid = "user " +str(i+1)
     lat = random.uniform(0, 100)
     longi = random.uniform(0, 100)
     currart = rstr
