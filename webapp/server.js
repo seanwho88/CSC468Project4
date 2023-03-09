@@ -65,7 +65,7 @@ getUsers((results) => {
     res.end(html);
   });
 
-  server.listen(port, hn, () => {
+  server.listen(port, () => {
     console.log(`Server running at http://${hn}:${port}/`);
   });
 });
