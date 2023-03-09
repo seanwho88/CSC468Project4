@@ -1,7 +1,7 @@
 const http = require('http');
 const pool = require('./app');
 
-const hostname = 'hostname';
+const hn = 'hostname';
 const port = 3000;
 
 function getUsers(callback) {
@@ -65,7 +65,7 @@ getUsers((results) => {
     res.end(html);
   });
 
-  server.listen(port, hostname, () => {
-    console.log(`Server running at http://${hostname}:${port}/`);
+  server.listen(port, hn, () => {
+    console.log(`Server running at http://${hn}:${port}/`);
   });
 });
