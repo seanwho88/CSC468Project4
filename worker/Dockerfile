@@ -1,6 +1,6 @@
 FROM python:3.9
 
-WORKDIR /Worker
+WORKDIR /worker
 
 COPY requirements.txt . 
 
