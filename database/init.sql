@@ -1,3 +1,9 @@
+CREATE TABLE location (
+  locationID INT PRIMARY KEY,
+  longitude FLOAT(10,6) NOT NULL,
+  latitude  FLOAT(10,6) NOT NULL
+);
+
 CREATE TABLE users (
   id INT NOT NULL AUTO_INCREMENT,
   Username VARCHAR(255) NOT NULL,
@@ -10,12 +16,6 @@ CREATE TABLE users (
   locationNew INT NOT NULL,
   FOREIGN KEY (locationNew) REFERENCES location(locationID), 
   PRIMARY KEY (id)
-);
-
-CREATE TABLE location (
-  locationID INT PRIMARY KEY,
-  longitude FLOAT(10,6) NOT NULL,
-  latitude  FLOAT(10,6) NOT NULL
 );
 
 INSERT INTO location (locationID, longitude, latitude) VALUES
