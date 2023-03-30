@@ -14,6 +14,7 @@ CREATE TABLE users (
   CurrentArtist VARCHAR(255),
   locationOld INT NOT NULL,
   locationNew INT NOT NULL,
+  FOREIGN KEY (locationOld) REFERENCES location(locationID),
   FOREIGN KEY (locationNew) REFERENCES location(locationID), 
   PRIMARY KEY (id)
 );
