@@ -18,6 +18,13 @@ while not connected:
 
 print("Connected to database:", mydb)
 
+# Create a cursor object
+c = conn.cursor()
+
+for user in users:
+    if user[7] != user[8]
+        c.execute("UPDATE users SET locationOld = ? WHERE id = ?", (user[8], user[0]))
+
 endTime = time.time() + 15
 while True:
   if(endTime<time.time()):
