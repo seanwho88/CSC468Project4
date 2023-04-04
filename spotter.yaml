@@ -18,3 +18,27 @@ spec:
         ports:
           - name: http-port
             containerPort: 3000
+            
+            
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: database
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: database
+  template:
+    metadata:
+      labels:
+        app: database
+    spec:
+      containers:
+      - name: database
+        image: mysql/mysql-server:latest
+        ports:
+          - name: http-port
+            containerPort: 3306
