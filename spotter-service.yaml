@@ -5,8 +5,22 @@ metadata:
 spec:
   type: NodePort
   ports:
-    - port: 3000
-      targetPort: 3000
-      nodePort: 30088
+    - port: 3000  
+      targetPort: 3000  
+      nodePort: 30088  
   selector:
     app: webapp
+
+---
+
+apiVersion: v1 
+kind: Service 
+metadata:  
+  name: database
+spec:  
+  ports:    
+    - port: 3306   
+      protocol: TCP      
+      targetPort: 3306  
+  selector:    
+      app: database
