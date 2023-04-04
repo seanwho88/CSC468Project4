@@ -1,5 +1,6 @@
 import mysql.connector
 import time
+import sqlite3
 
 connected = False
 while not connected:
