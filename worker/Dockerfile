@@ -19,5 +19,4 @@ COPY worker.py .
 # Expose the port the app will run on
 EXPOSE 5000
 
-CMD ["python", "data.py"]
 CMD ["python", "worker.py"]
