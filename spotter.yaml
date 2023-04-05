@@ -25,19 +25,19 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: database
+  name: mysql
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: database
+      app: mysql
   template:
     metadata:
       labels:
-        app: database
+        app: mysql
     spec:
       containers:
-      - name: database
+      - name: mysql
         image: mysql/mysql-server:latest
         ports:
           - name: http-port
