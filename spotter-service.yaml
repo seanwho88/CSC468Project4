@@ -24,3 +24,18 @@ spec:
       targetPort: 3306  
   selector:    
       app: mysql
+
+---
+
+apiVersion: v1 
+kind: Service 
+metadata:  
+  name: worker
+spec:
+  type: ClusterIP
+  ports:
+    - port: 5000
+      protocol: TCP
+      targetPort: 5000
+  selector:    
+      app: worker
