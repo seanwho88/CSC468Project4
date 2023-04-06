@@ -1,9 +1,11 @@
 import mysql.connector
 import random
 import string
-import socket
 import time
 
+# Define a function to generate random strings of 4 letters
+def generate_spotify_id():
+    return ''.join(random.choices(string.ascii_lowercase, k=4))
 
 connected = False
 while not connected:
@@ -22,57 +24,35 @@ while not connected:
 
 print("Connected to database:", mydb)
 
-# create a cursor object
+# Define a cursor object to execute SQL queries
 mycursor = mydb.cursor()
 
+# Generate 10 random locations and insert them into the location table
+locations = []
+for i in range(10):
+    longitude = round(random.uniform(-180, 180), 6)
+    latitude = round(random.uniform(-90, 90), 6)
+    locations.append((longitude, latitude))
 
-# Clear the users and location tables
-mycursor.execute("DELETE FROM users")
-mycursor.execute("DELETE FROM location")
-
-# Reset the auto-increment value for primary keys
-mycursor.execute("ALTER TABLE users AUTO_INCREMENT = 1")
-mycursor.execute("ALTER TABLE location AUTO_INCREMENT = 1")
-
-
-for i in range(1,12):
-    locid  = i 
-    loclat = random.uniform(0, 100)
-    loclong = random.uniform(0, 100)
-
-    qry = "INSERT INTO location (locationID, longitude, latitude) VALUES (%s, %s, %s)"
-    val = (locid, loclat, loclong)
-    mycursor.execute(qry, val)
-
-
+sql = "INSERT INTO location (longitude, latitude) VALUES (%s, %s)"
+mycursor.executemany(sql, locations)
 mydb.commit()
+print(f"{mycursor.rowcount} locations inserted.")
 
+# Generate 15 random users and insert them into the users table
+users = []
+for i in range(15):
+    username = f"user_{i}"
+    spotify_id = generate_spotify_id()
+    latitude = round(random.uniform(-90, 90), 6)
+    longitude = round(random.uniform(-180, 180), 6)
+    current_song = f"song_{i}"
+    current_artist = f"artist_{i}"
+    location_old = random.randint(1, 10)
+    location_new = random.randint(1, 10)
+    users.append((username, spotify_id, latitude, longitude, current_song, current_artist, location_old, location_new))
 
-# insert 25 new data sets into the table
-
-for i in range(5):
-    # generate random string
-    N = 10
-    rstr = ''.join(random.choices(string.ascii_uppercase + string.digits, k=N))
-
-    # generate a random name and age
-    uid = i 
-    uname = "user " + str(i + 1)
-    spotid = "user " + str(i + 1)
-    lat = random.uniform(1, 100)
-    longi = random.uniform(1, 100)
-    currsong = rstr
-    currart = rstr
-    locNew = random.randint(1, 11)
-    locOld = random.randint(1, 11)
-
-    # insert the data into the table
-    sql = "INSERT INTO users (id, Username, SpotifyID, Latitude, Longitude, CurrentSong, CurrentArtist, locationOld, locationNew) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
-    val = (uid, uname, spotid, lat, longi, currart,currsong, locOld, locNew)
-    mycursor.execute(sql, val)
-
-# commit the changes to the database
+sql = "INSERT INTO users (Username, SpotifyID, Latitude, Longitude, CurrentSong, CurrentArtist, locationOld, locationNew) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+mycursor.executemany(sql, users)
 mydb.commit()
-
-# print the number of rows affected
-print(mycursor.rowcount, "records inserted.")
+print(f"{mycursor.rowcount} users inserted.")
