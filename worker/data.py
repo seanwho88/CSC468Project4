@@ -25,6 +25,16 @@ print("Connected to database:", mydb)
 # create a cursor object
 mycursor = mydb.cursor()
 
+
+# Clear the users and location tables
+mycursor.execute("DELETE FROM users")
+mycursor.execute("DELETE FROM location")
+
+# Reset the auto-increment value for primary keys
+mycursor.execute("ALTER TABLE users AUTO_INCREMENT = 1")
+mycursor.execute("ALTER TABLE location AUTO_INCREMENT = 1")
+
+
 for i in range(1,12):
     locid  = i 
     loclat = random.uniform(0, 100)
