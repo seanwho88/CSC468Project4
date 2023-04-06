@@ -50,7 +50,7 @@ mydb.commit()
 
 # insert 25 new data sets into the table
 
-for i in range(25):
+for i in range(5):
     # generate random string
     N = 10
     rstr = ''.join(random.choices(string.ascii_uppercase + string.digits, k=N))
