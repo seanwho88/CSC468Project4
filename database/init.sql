@@ -1,5 +1,5 @@
 CREATE TABLE location (
-  locationID INT PRIMARY KEY,
+  locationID INT PRIMARY KEY AUTO_INCREMENT,
   longitude FLOAT(10,6) NOT NULL,
   latitude  FLOAT(10,6) NOT NULL
 );
