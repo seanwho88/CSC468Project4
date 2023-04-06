@@ -38,7 +38,30 @@ spec:
     spec:
       containers:
       - name: mysql
-        image: mysql/mysql-server:latest
+        image: mikec1233/spotter:database
         ports:
           - name: http-port
             containerPort: 3306
+            
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: worker
+  template:
+    metadata:
+      labels:
+        app: worker
+    spec:
+      containers:
+      - name: mysql
+        image: mikec1233/spotter:worker
+        ports:
+          - name: htt-port
+            containerPort: 5000
