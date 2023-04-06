@@ -44,7 +44,6 @@ spec:
             containerPort: 3306
             
 ---
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -60,8 +59,8 @@ spec:
         app: worker
     spec:
       containers:
-      - name: mysql
+      - name: worker
         image: mikec1233/spotter:worker
         ports:
-          - name: htt-port
+          - name: http-port
             containerPort: 5000
