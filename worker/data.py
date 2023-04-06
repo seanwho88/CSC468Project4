@@ -25,7 +25,7 @@ print("Connected to database:", mydb)
 # create a cursor object
 mycursor = mydb.cursor()
 
-for i in range(11):
+for i in range(1,12):
     locid  = i 
     loclat = random.uniform(0, 100)
     loclong = random.uniform(0, 100)
@@ -53,8 +53,8 @@ for i in range(25):
     longi = random.uniform(1, 100)
     currsong = rstr
     currart = rstr
-    locNew = random.randint(1, 14)
-    locOld = random.randint(1, 14)
+    locNew = random.randint(1, 11)
+    locOld = random.randint(1, 11)
 
     # insert the data into the table
     sql = "INSERT INTO users (id, Username, SpotifyID, Latitude, Longitude, CurrentSong, CurrentArtist, locationOld, locationNew) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
