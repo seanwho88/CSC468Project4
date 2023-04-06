@@ -7,6 +7,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY worker.py .
+COPY data.py .
 
 # Set environment variables
 # this will be unique everytime!! we need a way for this to be updated each experiment.
