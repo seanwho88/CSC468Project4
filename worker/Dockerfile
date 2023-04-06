@@ -8,8 +8,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY worker.py .
 COPY data.py .
+COPY run.sh .
 
-# Expose the port the app will run on
 EXPOSE 5000
 
-CMD ["python", "data.py", "&&", "python", "worker.py"]
+CMD ["bash", "run.sh"]
