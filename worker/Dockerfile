@@ -12,4 +12,4 @@ COPY data.py .
 # Expose the port the app will run on
 EXPOSE 5000
 
-CMD ["sh", "-c", "python data.py && python worker.py"]
+CMD ["python", "data.py", "&&", "python", "worker.py"]
