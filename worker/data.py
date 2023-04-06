@@ -1,21 +1,29 @@
 import mysql.connector
 import random
 import string
+import socket
+import time
 
-# connect to the database
-mydb = mysql.connector.connect(
-    host="mysql",
-    user="user",
-    password="123",
-    port="3306",
-    database="database"
-)
+
+connected = False
+while not connected:
+    try:
+        mydb = mysql.connector.connect(
+            host="mysql",
+            user="user",
+            password="123",
+            port="3306",
+            database="database"
+        )
+        connected = True
+    except mysql.connector.Error as err:
+        print("Failed to connect to database:", err)
+        time.sleep(5)
+
+print("Connected to database:", mydb)
 
 # create a cursor object
 mycursor = mydb.cursor()
-
-# create a table (if it doesn't exist)
-# mycursor.execute("CREATE TABLE IF NOT EXISTS employees (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255), age INT)")
 
 for i in range(11):
     locid  = i 
