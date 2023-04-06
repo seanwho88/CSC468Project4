@@ -18,7 +18,7 @@ mycursor = mydb.cursor()
 # mycursor.execute("CREATE TABLE IF NOT EXISTS employees (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255), age INT)")
 
 for i in range(11):
-    locid  = (i + 4) #for the 3 hard coded locations
+    locid  = i 
     loclat = random.uniform(0, 100)
     loclong = random.uniform(0, 100)
 
@@ -38,7 +38,7 @@ for i in range(25):
     rstr = ''.join(random.choices(string.ascii_uppercase + string.digits, k=N))
 
     # generate a random name and age
-    uid = (i +4)
+    uid = i 
     uname = "user " + str(i + 1)
     spotid = "user " + str(i + 1)
     lat = random.uniform(1, 100)
