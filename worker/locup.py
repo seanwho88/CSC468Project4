@@ -6,7 +6,7 @@ connected = False
 while not connected:
     try:
         mydb = mysql.connector.connect(
-            host="c220g2-030832vm-1.wisc.cloudlab.us", #localhost
+            host="mysql", #localhost
             user="user",
             password="123",
             port="3306",
