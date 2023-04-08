@@ -1,17 +1,19 @@
-function getCurrentLocation() {
+let userSpotifyID = null;
+
+function getCurrentLocation(userSpotifyID) {
   if ('geolocation' in navigator) {
     navigator.geolocation.getCurrentPosition((position) => {
       const lat = position.coords.latitude;
       const lon = position.coords.longitude;
+      const user = userSpotifyID;
       document.getElementById('location').innerHTML = `Current Location: Latitude ${lat}, Longitude ${lon}`;
 
-      // Send the location to the server
       fetch('/api/updateUserLocation', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ latitude: lat, longitude: lon, spotifyID: userSpotifyID }),
+        body: JSON.stringify({ latitude: lat, longitude: lon, spotifyID: user }),
       });
     });
   } else {
@@ -62,40 +64,54 @@ function updateCurrentlyPlaying(data) {
   }
 }
 
-function saveCurrentlyPlayingToDatabase(data) {
+
+function saveCurrentlyPlayingToDatabase(data, userSpotifyID) {
   fetch('/api/saveCurrentlyPlaying', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      spotifyID: data.context.uri.split(':')[2],
+      spotifyID: userSpotifyID,
       song: data.item.name,
       artist: data.item.artists[0].name,
     }),
   })
+    .then((response) => response.json())
+    .then((result) => {
+      console.log(result.message);
+    })
     .catch((error) => {
       console.error('Error saving currently playing data to database:', error);
     });
 }
 
-function getUserSpotInfo(accessToken) {
-  fetch('https://api.spotify.com/v1/me', {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log('User data:', data);
-      updateUserInfo(data);
-      getCurrentlyPlaying(accessToken).then((currentlyPlayingData) => {
-        saveUserDataToDatabase(data, currentlyPlayingData.item.name, currentlyPlayingData.item.artists[0].name);
-      });
-    })
-    .catch((error) => {
-      console.error('Error fetching user data:', error);
+
+async function getUserSpotInfo(accessToken) {
+  try {
+    const response = await fetch('https://api.spotify.com/v1/me', {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
     });
+    const data = await response.json();
+
+    console.log('User data:', data);
+
+    updateUserInfo(data);
+
+    const userSpotifyID = data.id;
+
+    const currentlyPlayingData = await getCurrentlyPlaying(accessToken);
+    saveCurrentlyPlayingToDatabase(currentlyPlayingData, userSpotifyID);
+    saveUserDataToDatabase(data, currentlyPlayingData.item.name, currentlyPlayingData.item.artists[0].name, userSpotifyID);
+    
+    getCurrentLocation(userSpotifyID); // pass userSpotifyID as an argument
+
+    return userSpotifyID;
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+  }
 }
 
 
@@ -112,7 +128,6 @@ function getCurrentlyPlaying(accessToken) {
     .then((data) => {
       console.log('Currently playing data:', data);
       updateCurrentlyPlaying(data);
-      saveCurrentlyPlayingToDatabase(data);
       return data;
     })
     .catch((error) => {
@@ -120,13 +135,14 @@ function getCurrentlyPlaying(accessToken) {
     });
 }
 
-function saveUserDataToDatabase(userData, currentSong, currentArtist) {
+function saveUserDataToDatabase(userData, currentSong, currentArtist, userSpotifyID) {
+  console.log("This is userSpotifyID: " + userSpotifyID);
   fetch('/api/saveUserData', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ ...userData, currentSong, currentArtist }),
+    body: JSON.stringify({ ...userData, currentSong, currentArtist, id: userSpotifyID }),
   })
     .then((response) => response.json())
     .then((result) => {
@@ -137,22 +153,20 @@ function saveUserDataToDatabase(userData, currentSong, currentArtist) {
     });
 }
 
-
-
-
-function checkAccessToken() {
+async function checkAccessToken() {
   const hash = window.location.hash.substring(1);
   const params = new URLSearchParams(hash);
 
   if (params.has('access_token')) {
     const accessToken = params.get('access_token');
-    getUserSpotInfo(accessToken);
+    await getUserSpotInfo(accessToken);
     getCurrentlyPlaying(accessToken).then((data) => {
-      userSpotifyID = data.context.uri.split(':')[2];
+      userSpotifyID = data.id;
     });
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  checkAccessToken();
+document.addEventListener('DOMContentLoaded', async () => {
+  await checkAccessToken();
+  getCurrentLocation();
 });
