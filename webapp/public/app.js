@@ -11,7 +11,7 @@ function getCurrentLocation() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ latitude: lat, longitude: lon }),
+        body: JSON.stringify({ latitude: lat, longitude: lon, spotifyID: userSpotifyID }),
       });
     });
   } else {
@@ -62,6 +62,19 @@ function updateCurrentlyPlaying(data) {
   }
 }
 
+function saveCurrentlyPlayingToDatabase(data) {
+  fetch('/api/saveCurrentlyPlaying', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  })
+    .catch((error) => {
+      console.error('Error saving currently playing data to database:', error);
+    });
+}
+
 function getUserSpotInfo(accessToken) {
   fetch('https://api.spotify.com/v1/me', {
     headers: {
@@ -72,6 +85,7 @@ function getUserSpotInfo(accessToken) {
     .then((data) => {
       console.log('User data:', data);
       updateUserInfo(data);
+      saveUserDataToDatabase(data);
     })
     .catch((error) => {
       console.error('Error fetching user data:', error);
@@ -91,13 +105,33 @@ function getCurrentlyPlaying(accessToken) {
     .then((data) => {
       console.log('Currently playing data:', data);
       updateCurrentlyPlaying(data);
+      saveCurrentlyPlayingToDatabase(data);
     })
     .catch((error) => {
       console.error('Error fetching currently playing data:', error);
     });
 }
 
+async function saveUserDataToDatabase(userData, currentSong, currentArtist) {
+  try {
+    const [existingUserResult] = await pool.execute('SELECT * FROM users WHERE SpotifyID = ?', [userData.id]);
 
+    if (existingUserResult.length === 0) {
+      await pool.execute(
+        'INSERT INTO users (Username, SpotifyID, Latitude, Longitude, CurrentSong, CurrentArtist, locationOld, locationNew) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+        [userData.display_name, userData.id, 0, 0, currentSong, currentArtist, 1, 1] // Placeholder values for Latitude and Longitude
+      );
+      console.log('User data saved to database');
+    } else {
+      console.log('User already exists in the database');
+    }
+  } catch (error) {
+    console.error('Error saving user data to database:', error);
+  }
+}
+
+
+let userSpotifyID = null;
 function checkAccessToken() {
   const hash = window.location.hash.substring(1);
   const params = new URLSearchParams(hash);
@@ -106,6 +140,7 @@ function checkAccessToken() {
     const accessToken = params.get('access_token');
     getUserSpotInfo(accessToken);
     getCurrentlyPlaying(accessToken);
+    userSpotifyID = userData.id;
   }
 }
 
