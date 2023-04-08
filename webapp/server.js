@@ -5,123 +5,114 @@ const apiRouter = require('./public/api');
 const expressStatic = require('express-static');
 const qs = require('querystring');
 require('dotenv').config();
-const request = require ('request');
-const axios = require ('axios');
+const request = require('request');
+const axios = require('axios');
+const cookieParser = require('cookie-parser');
+const cors = require('cors');
 
-
-const hn = "hostname"
+const hn = "hostname";
 const app = express();
 const port = 3000;
-const SPOTIFY_CLIENT_ID = '35a5e3f642214b238a5015aa91e9d9f8'
+const SPOTIFY_CLIENT_ID = '35a5e3f642214b238a5015aa91e9d9f8';
 const SPOTIFY_CLIENT_SECRET = '185026c7c8b646a382279a4ceae0bd38';
 const SPOTIFY_REDIRECT_URI = 'http://hostname:3000/callback';
+
+const stateKey = 'spotify_auth_state';
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use('/api', apiRouter); // use the api router for paths starting with /api
+app.use(cookieParser());
+app.use(cors());
 
 app.get('/', (req, res) => {
-    fs.readFile(__dirname + '/public/index.html', 'utf8', (err, data) => {
-      if (err) {
-        console.error(err);
-        res.status(500).send('Error reading index.html');
-      } else {
-        res.send(data);
-      }
-    });
+  fs.readFile(__dirname + '/public/index.html', 'utf8', (err, data) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send('Error reading index.html');
+    } else {
+      res.send(data);
+    }
   });
+});
 
-//app.get('/auth/spotify', (req, res) => {
-  app.get('/login', function(req, res) {
-  const scopes = 'user-read-private user-read-email';
+function generateRandomString(length) {
+  const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let text = '';
+
+  for (let i = 0; i < length; i++) {
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+  }
+
+  return text;
+}
+
+app.get('/login', (req, res) => {
+  const state = generateRandomString(16);
+  res.cookie(stateKey, state);
+
   const queryParams = qs.stringify({
     client_id: SPOTIFY_CLIENT_ID,
     response_type: 'code',
     redirect_uri: SPOTIFY_REDIRECT_URI,
+    state: state,
+    scope: 'user-read-private user-read-email user-read-currently-playing user-read-playback-state',
   });
 
   res.redirect(`https://accounts.spotify.com/authorize?${queryParams}`);
 });
 
-/* app.get('/auth/spotify/callback', (req, res) => {
-  const code = req.query.code || null;
-  const authOptions = {
-    url: 'https://accounts.spotify.com/api/token',
-    form: {
-      code: code,
-      redirect_uri: SPOTIFY_REDIRECT_URI,
-      grant_type: 'authorization_code',
-    },
-    headers: {
-      'Authorization': 'Basic ' + (Buffer.from(SPOTIFY_CLIENT_ID + ':' + SPOTIFY_CLIENT_SECRET).toString('base64')),
-    },
-    json: true,
-  };
-
-  request.post(authOptions, (error, response, body) => {
-    if (!error && response.statusCode === 200) {
-      const access_token = body.access_token;
-      const refresh_token = body.refresh_token;
-
-      // Get user profile data here and save it to the database
-      
-
-      res.redirect('/'); // Redirect back to the main page
-    } else {
-      res.redirect('/#' +
-        qs.stringify({
-          error: 'invalid_token',
-        }));
-    }
-  });
-});
-*/
-
 app.get('/callback', (req, res) => {
   const code = req.query.code || null;
+  const state = req.query.state || null;
+  const storedState = req.cookies ? req.cookies[stateKey] : null;
 
-  axios({
-    method: 'post',
-    url: 'https://accounts.spotify.com/api/token',
-    data: qs.stringify({
-      grant_type: 'authorization_code',
-      code: code,
-      redirect_uri: SPOTIFY_REDIRECT_URI
-    }),
-    headers: {
-      'content-type': 'application/x-www-form-urlencoded',
-      Authorization: `Basic ${new Buffer.from(`${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`).toString('base64')}`,
-    },
-  })
-  .then(response => {
-    if (response.status === 200) {
+  if (state === null || state !== storedState) {
+    res.redirect('/#' + qs.stringify({ error: 'state_mismatch' }));
+  } else {
+    res.clearCookie(stateKey);
 
-      const { access_token, token_type } = response.data;
+    axios({
+      method: 'post',
+      url: 'https://accounts.spotify.com/api/token',
+      data: qs.stringify({
+        grant_type: 'authorization_code',
+        code: code,
+        redirect_uri: SPOTIFY_REDIRECT_URI,
+      }),
+      headers: {
+        'content-type': 'application/x-www-form-urlencoded',
+        Authorization: `Basic ${new Buffer.from(`${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`).toString('base64')}`,
+      },
+    })
+      .then(response => {
+        if (response.status === 200) {
+          const { access_token, refresh_token, token_type } = response.data;
 
-      axios.get('https://api.spotify.com/v1/me', {
-        headers: {
-          Authorization: `${token_type} ${access_token}`
+          axios
+            .get('https://api.spotify.com/v1/me', {
+              headers: {
+                Authorization: `${token_type} ${access_token}`,
+              },
+            })
+            .then(response => {
+              res.redirect(
+                '/#' +
+                qs.stringify({
+                  access_token: access_token,
+                  refresh_token: refresh_token
+                }));
+            })
         }
       })
-        .then(response => {
-          res.send(`<pre>${JSON.stringify(response.data, null, 2)}</pre>`);
-        })
-        .catch(error => {
-          res.send(error);
-        });
-
-    } else {
-      res.send(response);
-    }
-  })
-  .catch(error => {
-    res.send(error);
-  });
+      .catch(error => {
+        console.error(error);
+        res.status(500).send('Error requesting access token');
+      });
+  }
 });
 
-
 app.use(expressStatic('public'));
-
 
 function connectToDatabase() {
   pool.getConnection((error, connection) => {
@@ -138,3 +129,4 @@ function connectToDatabase() {
   });
 }
 connectToDatabase();
+
