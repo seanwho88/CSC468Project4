@@ -101,6 +101,10 @@ router.post('/updateUserLocation', (req, res) => {
 
 router.post('/saveCurrentlyPlaying', (req, res) => {
     const { spotifyID, song, artist } = req.body;
+    console.log(spotifyID);
+    console.log(artist);
+    console.log(song);
+
     saveCurrentlyPlaying(spotifyID, song, artist, (err) => {
         if (err) {
             console.error(err);
@@ -111,12 +115,5 @@ router.post('/saveCurrentlyPlaying', (req, res) => {
     });
 });
 
-
-router.post('/saveCurrentlyPlaying', (req, res) => {
-    const { spotifyID, song, artist } = req.body;
-    saveCurrentlyPlaying(spotifyID, song, artist, () => {
-        res.sendStatus(201);
-    });
-});
 
 module.exports = router;
