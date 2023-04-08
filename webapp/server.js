@@ -10,18 +10,18 @@ const axios = require('axios');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 
-const hn = "hostname";
+const hn = "localhost";
 const app = express();
-const port = 3000;
+const port = 3001;
 const SPOTIFY_CLIENT_ID = '35a5e3f642214b238a5015aa91e9d9f8';
 const SPOTIFY_CLIENT_SECRET = '185026c7c8b646a382279a4ceae0bd38';
-const SPOTIFY_REDIRECT_URI = 'http://hostname:3000/callback';
+const SPOTIFY_REDIRECT_URI = 'http://localhost:3001/callback';
 
 const stateKey = 'spotify_auth_state';
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use('/api', apiRouter); // use the api router for paths starting with /api
+app.use('/api', apiRouter);
 app.use(cookieParser());
 app.use(cors());
 
@@ -112,25 +112,32 @@ app.get('/callback', (req, res) => {
   }
 });
 
-// Add this endpoint to server.js
-app.post('/api/saveUserData', async (req, res) => {
-  const userData = req.body;
+app.post('/api/saveUserData', (req, res) => {
+  const { display_name, id, currentSong, currentArtist } = req.body;
 
-  try {
-    const [queryResult] = await pool.execute(
-      'INSERT INTO users (Username, SpotifyID, Latitude, Longitude, CurrentSong, CurrentArtist, locationOld, locationNew) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-      [userData.display_name, userData.id, 0, 0, currentSong, currentArtist, 1, 11] // Placeholder values for Latitude, Longitude, CurrentSong, and CurrentArtist
-    );
-
-    res.status(200).send({ message: 'User data saved to database', insertId: queryResult.insertId });
-  } catch (error) {
-    console.error('Error saving user data to database:', error);
-    res.status(500).send({ message: 'Error saving user data to database' });
+  if (!display_name || !id || !currentSong || !currentArtist) {
+    console.error('Some required data is missing:', req.body);
+    res.status(400).send({ message: 'Some required data is missing' });
+    return;
   }
+
+  console.log('Data to be saved:', { display_name, id, currentSong, currentArtist });
+
+  pool.execute(
+    'INSERT INTO users (Username, SpotifyID, Latitude, Longitude, CurrentSong, CurrentArtist, locationOld, locationNew) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+    [display_name, id, 0, 0, currentSong, currentArtist, 1, 11],
+    (error, results, fields) => {
+      if (error) {
+        console.error('Error saving user data to database:', error);
+        res.status(500).send({ message: 'Error saving user data to database' });
+        return;
+      }
+
+      console.log('User data saved to database:', results);
+      res.status(200).send({ message: 'User data saved to database', insertId: results.insertId });
+    }
+  );
 });
-
-
-
 
 app.use(expressStatic('public'));
 
