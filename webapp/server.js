@@ -10,12 +10,12 @@ const axios = require('axios');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 
-const hn = "hostname";
+const hn = "localhost";
 const app = express();
-const port = 3000;
+const port = 3001;
 const SPOTIFY_CLIENT_ID = '35a5e3f642214b238a5015aa91e9d9f8';
 const SPOTIFY_CLIENT_SECRET = '185026c7c8b646a382279a4ceae0bd38';
-const SPOTIFY_REDIRECT_URI = 'http://hostname:3000/callback';
+const SPOTIFY_REDIRECT_URI = 'http://localhost:3001/callback';
 
 const stateKey = 'spotify_auth_state';
 
@@ -111,6 +111,26 @@ app.get('/callback', (req, res) => {
       });
   }
 });
+
+// Add this endpoint to server.js
+app.post('/api/saveUserData', async (req, res) => {
+  const userData = req.body;
+
+  try {
+    const [queryResult] = await pool.execute(
+      'INSERT INTO users (Username, SpotifyID, Latitude, Longitude, CurrentSong, CurrentArtist, locationOld, locationNew) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      [userData.display_name, userData.id, 0, 0, currentSong, currentArtist, 1, 11] // Placeholder values for Latitude, Longitude, CurrentSong, and CurrentArtist
+    );
+
+    res.status(200).send({ message: 'User data saved to database', insertId: queryResult.insertId });
+  } catch (error) {
+    console.error('Error saving user data to database:', error);
+    res.status(500).send({ message: 'Error saving user data to database' });
+  }
+});
+
+
+
 
 app.use(expressStatic('public'));
 
