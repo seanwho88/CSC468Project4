@@ -112,7 +112,7 @@ app.get('/callback', (req, res) => {
   }
 });
 
-app.post('/api/saveUserData', (req, res) => {
+app.post('/api/saveUserData', async (req, res) => {
   const { display_name, id, currentSong, currentArtist } = req.body;
 
   if (!display_name || !id || !currentSong || !currentArtist) {
@@ -123,21 +123,29 @@ app.post('/api/saveUserData', (req, res) => {
 
   console.log('Data to be saved:', { display_name, id, currentSong, currentArtist });
 
-  pool.execute(
-    'INSERT INTO users (Username, SpotifyID, Latitude, Longitude, CurrentSong, CurrentArtist, locationOld, locationNew) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-    [display_name, id, 0, 0, currentSong, currentArtist, 1, 11],
-    (error, results, fields) => {
-      if (error) {
-        console.error('Error saving user data to database:', error);
-        res.status(500).send({ message: 'Error saving user data to database' });
-        return;
-      }
+  try {
+    const [userExists] = await pool.query('SELECT * FROM users WHERE SpotifyID = ?', [id]);
 
-      console.log('User data saved to database:', results);
-      res.status(200).send({ message: 'User data saved to database', insertId: results.insertId });
+    if (userExists.length > 0) {
+      await pool.query(
+        'UPDATE users SET CurrentSong = ?, CurrentArtist = ? WHERE SpotifyID = ?',
+        [currentSong, currentArtist, id]
+      );
+      res.status(200).send({ message: 'User data updated in database' });
+    } else {
+      const [queryResult] = await pool.execute(
+        'INSERT INTO users (Username, SpotifyID, Latitude, Longitude, CurrentSong, CurrentArtist, locationOld, locationNew) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+        [display_name, id, 0, 0, currentSong, currentArtist, 1, 11]
+      );
+      console.log('User data saved to database:', queryResult);
+      res.status(200).send({ message: 'User data saved to database', insertId: queryResult.insertId });
     }
-  );
+  } catch (error) {
+    console.error('Error saving user data to database:', error);
+    res.status(500).send({ message: 'Error saving user data to database' });
+  }
 });
+
 
 app.use(expressStatic('public'));
 
