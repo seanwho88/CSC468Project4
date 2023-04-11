@@ -13,8 +13,8 @@ const cors = require('cors');
 const hn = "hostname";
 const app = express();
 const port = 3000;
-const SPOTIFY_CLIENT_ID = '455f4bbcf534453e92b92e6842f1b66d';
-const SPOTIFY_CLIENT_SECRET = '333e4d017b3645688aab9aca08c3de57';
+const SPOTIFY_CLIENT_ID = '35a5e3f642214b238a5015aa91e9d9f8';
+const SPOTIFY_CLIENT_SECRET = '185026c7c8b646a382279a4ceae0bd38';
 const SPOTIFY_REDIRECT_URI = 'http://hostname:3000/callback';
 
 const stateKey = 'spotify_auth_state';
