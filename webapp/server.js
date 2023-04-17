@@ -146,7 +146,7 @@ app.post('/api/saveUserData', (req, res) => {
     } else {
       pool.execute(
         'INSERT INTO users (Username, SpotifyID, Latitude, Longitude, CurrentSong, CurrentArtist, locationOld, locationNew) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-        [display_name, id, 0, 0, currentSong, currentArtist, 1, 11],
+        [display_name, id, 0, 0, currentSong, currentArtist, 1, 1],
         (error, results) => {
           if (error) {
             console.error('Error saving user data to database:', error);
