@@ -1,7 +1,7 @@
 CREATE TABLE location (
   locationID INT PRIMARY KEY AUTO_INCREMENT,
-  longitude FLOAT(10,6) NOT NULL,
-  latitude  FLOAT(10,6) NOT NULL
+  latitude  FLOAT(10,6) NOT NULL,
+  longitude FLOAT(10,6) NOT NULL
 );
 
 CREATE TABLE users (
@@ -17,4 +17,8 @@ CREATE TABLE users (
   FOREIGN KEY (locationNew) REFERENCES location(locationID), 
   PRIMARY KEY (id)
 );
+
+INSERT INTO location (latitude, longitude)
+VALUES (39.9535359, -75.5997438);
+
 
