@@ -1,3 +1,3 @@
 #!/bin/sh
-python data.py
+#python data.py
 python worker.py
