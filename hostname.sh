@@ -11,3 +11,4 @@ sed -i "/^ *host *= *\"mysql\"/ s/\"mysql\"/\"${name}\"/" ./worker_spotify/worke
 sed -i "/^ *host *= *\"mysql\"/ s/\"mysql\"/\"${name}\"/" ./worker_spotify/data.py
 sed -i "/^ *host *= *\"mysql\"/ s/\"mysql\"/\"${name}\"/" ./worker/locup.py
 sed -i "s/hostname/${name}/g" ./webapp/server.js
+sed -i "s/hostname/${name}/g" ./webapp/public/app.js
