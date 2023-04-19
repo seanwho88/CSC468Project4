@@ -256,7 +256,7 @@ async function checkUserProximity(latitude, longitude, spotifyID) {
 
 async function fetchUsers() {
   try {
-    const response = await fetch('http://localhost:3001/api/users');
+    const response = await fetch('http://hostname:3000/api/users');
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
