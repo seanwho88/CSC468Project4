@@ -12,12 +12,16 @@ const cors = require('cors');
 
 const hn = "hostname";
 const app = express();
-const port = 3000;
+const port = 3001;
 const SPOTIFY_CLIENT_ID = '35a5e3f642214b238a5015aa91e9d9f8';
 const SPOTIFY_CLIENT_SECRET = '185026c7c8b646a382279a4ceae0bd38';
 const SPOTIFY_REDIRECT_URI = 'http://hostname:3000/callback';
 
 const stateKey = 'spotify_auth_state';
+const bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -97,11 +101,12 @@ app.get('/callback', (req, res) => {
             })
             .then(response => {
               res.redirect(
-                '/#' +
+                '/dashboard#' +
                 qs.stringify({
                   access_token: access_token,
                   refresh_token: refresh_token
                 }));
+
             })
         }
       })
@@ -111,6 +116,18 @@ app.get('/callback', (req, res) => {
       });
   }
 });
+
+app.get('/dashboard', (req, res) => {
+  fs.readFile(__dirname + '/public/dashboard.html', 'utf8', (err, data) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send('Error reading dashboard.html');
+    } else {
+      res.send(data);
+    }
+  });
+});
+
 
 app.post('/api/saveUserData', (req, res) => {
   const { display_name, id, currentSong, currentArtist } = req.body;
@@ -163,6 +180,7 @@ app.post('/api/saveUserData', (req, res) => {
 
 
 app.use(expressStatic('public'));
+app.use(express.json());
 
 function connectToDatabase() {
   pool.getConnection((error, connection) => {
