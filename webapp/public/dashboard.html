@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="css/dashboard.css">
+  <script src="/app.js"></script>
+</head>
+<body>
+  <div id="main-container">
+    <div id="proximity-users-section">
+      <h2>Nearby Users</h2>
+      <div id="proximity-users"></div>
+    </div>
+  </div>
+  <div id="user-info-section">
+    <h3>Your Information</h3>
+    <div id="user-info"></div>
+    <div id="currently-playing"></div>
+    <div id="location"></div>
+  </div>
+  <div id="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Username</th>
+          <th>SpotifyID</th>
+          <th>Latitude</th>
+          <th>Longitude</th>
+          <th>CurrentSong</th>
+          <th>CurrentArtist</th>
+          <th>locationOld</th>
+          <th>locationNew</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <script>
+    document.getElementById("user-info-section").addEventListener("mouseover", function() {
+      document.getElementById("user-info-section").style.opacity = "1";
+    });
+    document.getElementById("user-info-section").addEventListener("mouseout", function() {
+      document.getElementById("user-info-section").style.opacity = "0";
+    });
+  </script>
+</body>
+</html>
