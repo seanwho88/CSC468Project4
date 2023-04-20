@@ -39,7 +39,7 @@ function saveCurrentlyPlaying(spotifyID, song, artist, callback) {
         }
 
         connection.release();
-        console.log(`Updated currently playing song and artist for user ${spotifyID}`);
+        //console.log(`Updated currently playing song and artist for user ${spotifyID}`);
         if (typeof callback === 'function') {
           callback(null, results);
         }
@@ -70,7 +70,7 @@ function updateUserLocation(latitude, longitude, spotifyID, callback) {
         }
 
         connection.release();
-        console.log(`Updated user location to (${latitude}, ${longitude}) for user ${spotifyID}`);
+        //console.log(`Updated user location to (${latitude}, ${longitude}) for user ${spotifyID}`);
         if (typeof callback === 'function') {
           callback(null);
         }
@@ -81,7 +81,6 @@ function updateUserLocation(latitude, longitude, spotifyID, callback) {
 
 
 function getStaticLocation(locationID, callback) {
-  console.log("THIS IS VALUE OF LOCATIONID " + locationID);
   pool.getConnection((error, connection) => {
     if (error) {
       if (typeof callback === 'function') {
@@ -127,16 +126,16 @@ router.post('/updateUserLocation', (req, res) => {
       console.error(err);
       res.status(500).send('Error updating user location');
     } else {
-      res.sendStatus(201);
+      res.status(201).json({ message: 'Created' });
     }
   });
 });
 
 router.post('/saveCurrentlyPlaying', (req, res) => {
   const { spotifyID, song, artist } = req.body;
-  console.log(spotifyID);
+ /*  console.log(spotifyID);
   console.log(artist);
-  console.log(song);
+  console.log(song); */
 
   saveCurrentlyPlaying(spotifyID, song, artist, (err) => {
     if (err) {
@@ -149,13 +148,13 @@ router.post('/saveCurrentlyPlaying', (req, res) => {
 });
 
 router.post('/checkUserProximity', async (req, res) => {
-  const { latitude, longitude, spotifyID } = req.body;
-  console.log('Received data in checkUserProximity:', req.body);
-  console.log('latitude:', latitude);
-  console.log('longitude:', longitude);
-  console.log('spotifyID:', spotifyID);
+  const { Latitude, Longitude, SpotifyID } = req.body;
+ /*  console.log('Received data in checkUserProximity:', req.body);
+  console.log('latitude:', Latitude);
+  console.log('longitude:', Longitude);
+  console.log('spotifyID:', SpotifyID); */
 
-  const proximity = 0.035;
+  const proximity = 100;
   const targetLocationID = 1;
 
   try {
@@ -165,16 +164,16 @@ router.post('/checkUserProximity', async (req, res) => {
           console.error('Error getting static location:', error);
           reject(error);
         } else {
-          console.log('Static location:', location);
+          //console.log('Static location:', location);
           resolve(location);
         }
       });
     });
 
-    console.log('User location:', { latitude, longitude });
+    //console.log('User location:', { Latitude, Longitude });
 
     const isWithinProximity = geolib.isPointWithinRadius(
-      { latitude: latitude, longitude: longitude },
+      { latitude: Latitude, longitude: Longitude },
       { latitude: targetLocation.Latitude, longitude: targetLocation.Longitude },
       proximity * 1000
     );
