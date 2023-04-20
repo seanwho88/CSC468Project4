@@ -1,7 +1,6 @@
 
 //gets hash parameters from URL and returns as obj w key pairs
 function getHashParams() {
-  console.log("Get Hash");
   const hashParams = {};
   const r = /([^&;=]+)=?([^&;]*)/g;
   const q = window.location.hash.substring(1);
@@ -18,35 +17,26 @@ const params = getHashParams();
 const accessToken = params.access_token;
 
 if (accessToken) {
-  console.log('Access token found, calling getUserSpotInfo');
   getUserSpotInfo(accessToken);
 } else {
   console.log('No access token found in URL');
 }
 
 
-
-function getCurrentLocation(userSpotifyID) {
+async function getCurrentLocation(userSpotifyID) {
   if ('geolocation' in navigator) {
-    console.log("getCurrentLocation being called");
-
-    const successCallback = (position) => {
+    const successCallback = async (position) => {
       const lat = position.coords.latitude;
       const lon = position.coords.longitude;
       const user = userSpotifyID;
       document.getElementById('location').innerHTML = `Current Location: Latitude ${lat}, Longitude ${lon} for user ${user}`;
 
-      console.log('User ID:', user);
-      const callback = () => {
-        console.log("Calling checkUserProximity");
-        checkUserProximity(lat, lon, userSpotifyID)
-          .then((data) => {
-            const proximityUsersDiv = document.getElementById('proximity-users');
-            const existingUserDiv = document.getElementById(`user-${userSpotifyID}`);
-            if (!data.isWithinProximity && existingUserDiv) {
-              proximityUsersDiv.removeChild(existingUserDiv);
-            }
-          });
+      const callback = async () => {
+        const users = await fetchUsers();
+        const currentUser = users.find(user => user.SpotifyID === userSpotifyID);
+        if (currentUser) {
+          await checkUserProximity(lat, lon, userSpotifyID, currentUser.CurrentSong, currentUser.CurrentArtist);
+        }
       };
 
       if (!user) {
@@ -68,7 +58,6 @@ function getCurrentLocation(userSpotifyID) {
           return response.text();
         })
         .then((data) => {
-          console.log('Update user location result:', data.message);
           callback();
         })
         .catch((error) => {
@@ -84,20 +73,21 @@ function getCurrentLocation(userSpotifyID) {
     const options = {
       enableHighAccuracy: true,
       maximumAge: 0,
-      timeout: 5000
+      timeout: 10000
     };
 
-    navigator.geolocation.watchPosition(successCallback, errorCallback, options);
-  } else {
-    document.getElementById('location').innerHTML = 'Geolocation is not supported by your browser.';
+
+    // Call successCallback every 30 seconds instead of using watchPosition
+    setInterval(() => {
+      navigator.geolocation.getCurrentPosition(successCallback, errorCallback, options);
+    }, 5000);
   }
+
 }
 
 
 
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('DOMContentLoaded event fired');
-
   fetch('/api/users')
     .then(response => response.json())
     .then(users => {
@@ -162,15 +152,15 @@ function saveCurrentlyPlayingToDatabase(data, userSpotifyID) {
   })
     .then((response) => response.json())
     .then((result) => {
-      console.log(result.message);
+      console.log(result.message)
     })
     .catch((error) => {
       console.error('Error saving currently playing data to database:', error);
     });
 }
 
+
 async function getUserSpotInfo(accessToken) {
-  console.log('getUserSpotInfo called with access token:', accessToken);
   try {
     const response = await fetch('https://api.spotify.com/v1/me', {
       headers: {
@@ -179,20 +169,28 @@ async function getUserSpotInfo(accessToken) {
     });
     const data = await response.json();
 
-    console.log('User data:', data);
-
     updateUserInfo(data);
 
     const userSpotifyID = data.id;
 
     const currentlyPlayingData = await getCurrentlyPlaying(accessToken);
-    saveCurrentlyPlayingToDatabase(currentlyPlayingData, userSpotifyID);
-    saveUserDataToDatabase(data, currentlyPlayingData.item.name, currentlyPlayingData.item.artists[0].name, userSpotifyID)
-      .then(() => {
-        console.log("calling getCurrentLocation");
+    if (currentlyPlayingData) {
+      saveCurrentlyPlayingToDatabase(currentlyPlayingData, userSpotifyID);
+      saveUserDataToDatabase(
+        data,
+        currentlyPlayingData.item.name,
+        currentlyPlayingData.item.artists[0].name,
+        userSpotifyID
+      ).then(() => {
         getCurrentLocation(userSpotifyID);
       });
+    } else {
+      saveUserDataToDatabase(data, null, null, userSpotifyID).then(() => {
+        getCurrentLocation(userSpotifyID);
+      });
+    }
 
+    setInterval(() => updateSong(userSpotifyID, accessToken), 5000);
     return userSpotifyID;
   } catch (error) {
     console.error('Error fetching user data:', error);
@@ -201,49 +199,56 @@ async function getUserSpotInfo(accessToken) {
 
 
 
-function getCurrentlyPlaying(accessToken) {
-  return fetch('https://api.spotify.com/v1/me/player/currently-playing', {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  })
-    .then((response) => {
-      console.log('Currently playing response status:', response.status);
-      return response.json();
-    })
-    .then((data) => {
-      console.log('Currently playing data:', data);
-      updateCurrentlyPlaying(data);
-      return data;
-    })
-    .catch((error) => {
-      console.error('Error fetching currently playing data:', error);
+async function getCurrentlyPlaying(accessToken, userSpotifyID) {
+  try {
+    const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
     });
+
+    if (response.status === 204 || !response.ok) {
+      console.log('No song currently playing or an error occurred.');
+      return null;
+    }
+
+    const text = await response.text();
+    if (!text) {
+      console.log('Empty response.');
+      return null;
+    }
+
+    const data = JSON.parse(text);
+    updateCurrentlyPlaying(data);
+    saveCurrentlyPlayingToDatabase(data, userSpotifyID);
+    return data;
+  } catch (error) {
+    console.error('Error fetching currently playing data:', error);
+  }
 }
 
 
-function saveUserDataToDatabase(userData, currentSong, currentArtist, userSpotifyID) {
-  console.log("This is userSpotifyID: " + userSpotifyID);
-  return fetch('/api/saveUserData', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ ...userData, currentSong, currentArtist, id: userSpotifyID }),
-  })
-    .then((response) => response.json())
-    .then((result) => {
-      console.log(result.message);
-    })
-    .catch((error) => {
-      console.error('Error saving user data to database:', error);
+
+async function saveUserDataToDatabase(userData, currentSong, currentArtist, userSpotifyID) {
+  try {
+    const response = await fetch('/api/saveUserData', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ ...userData, currentSong, currentArtist, id: userSpotifyID }),
     });
+    const result_1 = await response.json();
+    console.log(result_1.message);
+  } catch (error) {
+    console.error('Error saving user data to database:', error);
+  }
 }
 
 
 async function fetchUsers() {
   try {
-    const response = await fetch('http://hostname:3000/api/users');
+    const response = await fetch('http://localhost:3001/api/users');
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
@@ -256,13 +261,8 @@ async function fetchUsers() {
 }
 
 async function checkUserProximity(Latitude, Longitude, SpotifyID, CurrentSong, CurrentArtist) {
-  console.log('Checking user proximity...');
-  console.log('Latitude:', Latitude);
-  console.log('Longitude:', Longitude);
-  console.log('Spotify ID:', SpotifyID);
-
   try {
-    console.log('Sending data to checkUserProximity:', { Latitude, Longitude, SpotifyID });
+    //console.log('Sending data to checkUserProximity:', { Latitude, Longitude, SpotifyID });
     const response = await fetch('/api/checkUserProximity', {
       method: 'POST',
       headers: {
@@ -273,7 +273,7 @@ async function checkUserProximity(Latitude, Longitude, SpotifyID, CurrentSong, C
 
     if (response.status === 200) {
       const data = await response.json();
-      console.log(`Fetched proximity data for ${SpotifyID}: ${CurrentSong} by ${CurrentArtist}`);
+      //console.log(`Fetched proximity data for ${SpotifyID}: ${CurrentSong} by ${CurrentArtist}`);
       //console.log('Proximity data:', data);
       const proximityUsersDiv = document.getElementById('proximity-users');
       const userDiv = document.createElement('div');
@@ -283,13 +283,13 @@ async function checkUserProximity(Latitude, Longitude, SpotifyID, CurrentSong, C
         if (!existingUserDiv) {
           userDiv.innerHTML = `
             <h3>User: ${SpotifyID}</h3>
-            <p>Currently playing: ${CurrentSong} by ${CurrentArtist}</p>
+            <p>Currently playing: ${CurrentSong ? CurrentSong : 'Unknown'} by ${CurrentArtist ? CurrentArtist : 'Unknown'}</p>
           `;
           proximityUsersDiv.appendChild(userDiv);
         } else {
           existingUserDiv.innerHTML = `
             <h3>User: ${SpotifyID}</h3>
-            <p>Currently playing: ${CurrentSong} by ${CurrentArtist}</p>
+            <p>Currently playing: ${CurrentSong ? CurrentSong : 'Unknown'} by ${CurrentArtist ? CurrentArtist : 'Unknown'}</p>
           `;
         }
       } else {
@@ -297,7 +297,6 @@ async function checkUserProximity(Latitude, Longitude, SpotifyID, CurrentSong, C
           proximityUsersDiv.removeChild(existingUserDiv);
         }
       }
-      updateUserLocation(SpotifyID, Latitude, Longitude);
       return data;
     } else {
       console.error('Error checking user proximity');
@@ -307,59 +306,55 @@ async function checkUserProximity(Latitude, Longitude, SpotifyID, CurrentSong, C
   }
 }
 
-async function updateUserLocation(userSpotifyID, lat, lon) {
+
+async function checkUserProximity(Latitude, Longitude, SpotifyID, CurrentSong, CurrentArtist) {
   try {
-    const response = await fetch('/api/updateUserLocation', {
+    const response = await fetch('/api/checkUserProximity', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ spotifyID: userSpotifyID, latitude: lat, longitude: lon }),
+      body: JSON.stringify({ Latitude, Longitude, SpotifyID }),
     });
 
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
+    if (response.status === 200) {
+      const data = await response.json();
+      const proximityUsersDiv = document.getElementById('proximity-users');
+      const userDiv = document.createElement('div');
+      userDiv.id = `user-${SpotifyID}`;
+      const existingUserDiv = document.getElementById(`user-${SpotifyID}`);
+      const currentlyPlayingText = CurrentSong && CurrentArtist ? `${CurrentSong} by ${CurrentArtist}` : 'No track is currently playing';
 
-    const data = await response.json();
-    console.log('Update user location result:', data.message);
+      if (data.isWithinProximity) {
+        if (!existingUserDiv) {
+          userDiv.innerHTML = `
+            <h3>User: ${SpotifyID}</h3>
+            <p>Currently playing: ${currentlyPlayingText}</p>
+          `;
+          proximityUsersDiv.appendChild(userDiv);
+        } else {
+          existingUserDiv.innerHTML = `
+            <h3>User: ${SpotifyID}</h3>
+            <p>Currently playing: ${currentlyPlayingText}</p>
+          `;
+        }
+      } else {
+        if (existingUserDiv) {
+          proximityUsersDiv.removeChild(existingUserDiv);
+        }
+      }
+      return data;
+    } else {
+      console.error('Error checking user proximity');
+    }
   } catch (error) {
-    console.error('Error updating user location:', error);
+    console.error('Error checking user proximity:', error);
   }
 }
 
 
-async function checkProximityForAllUsers() {
-  try {
-    const users = await fetchUsers();
-    if (!users) {
-      console.error('No users found');
-      return;
-    }
-
-    const usersWithinProximity = [];
-
-    // Wait for all proximity checks to complete
-    await Promise.all(users.map(async (user) => {
-      const { Latitude, Longitude, SpotifyID, CurrentSong, CurrentArtist } = user;
-      const proximityData = await checkUserProximity(Latitude, Longitude, SpotifyID, CurrentSong, CurrentArtist);
-      if (!proximityData) {
-        console.error(`Unable to retrieve proximity data for user ${SpotifyID}`);
-        return;
-      }
-
-      if (proximityData.isWithinProximity) {
-        console.log(`User ${SpotifyID} is within proximity. Song: ${CurrentSong} by ${CurrentArtist}`);
-        usersWithinProximity.push(user);
-      } else {
-        console.log(`User ${SpotifyID} is not within proximity.`);
-      }
-    }));
-
-    populateUserList(usersWithinProximity); // Update the user list on the web page
-  } catch (error) {
-    console.error('Error while checking proximity for all users:', error);
-  }
+function updateSong(userSpotifyID, accessToken) {
+  getCurrentlyPlaying(accessToken, userSpotifyID);
 }
 
 
