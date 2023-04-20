@@ -154,7 +154,7 @@ router.post('/checkUserProximity', async (req, res) => {
   console.log('longitude:', Longitude);
   console.log('spotifyID:', SpotifyID); */
 
-  const proximity = 100;
+  const proximity = .030;
   const targetLocationID = 1;
 
   try {
