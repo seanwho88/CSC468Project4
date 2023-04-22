@@ -3,6 +3,13 @@ import geni.rspec.pg as pg
 import geni.rspec.igext as IG
    
 pc = portal.Context()
+
+pc.defineParameter( "userid", 
+                   "CloudLab user ID to deploy K8s from (should be your CloudLab ID. Defaulted to none", 
+                   portal.ParameterType.STRING, 'none' )
+
+params = pc.bindParameters()
+
 request = pc.makeRequestRSpec()
 
 tourDescription = \
