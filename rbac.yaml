@@ -22,7 +22,3 @@ subjects:
 - kind: ServiceAccount
   name: default
   namespace: spotter
-<<<<<<< HEAD
-
-=======
->>>>>>> e75dcefc5f0c962496e0333fd8705895b9f35c76
