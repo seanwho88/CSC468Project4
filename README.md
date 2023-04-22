@@ -44,7 +44,7 @@ Due to the ephemeral nature of CloudLab experiments, our site's IP address chang
 The application is currently written in vanilla JS. We are planning to refactor the application using React moving forward.
 
 
-## Authors
+## Team
 
 - [@AyalaBrianna](https://github.com/AyalaBrianna)
 - [@seanwho88](https://github.com/seanwho88)
