@@ -38,7 +38,7 @@ We are currently using Chrome's "chrome://flags/#unsafely-treat-insecure-origin-
 
 Due to limitations with Spotify's API, small scale applications must register each user who will be accessing the API for a total of 25 concurrent users. 
 
-Due to the ephemeral nature of CloudLab experiments, our site's IP address changes often. This has caused slight hiccups as each deployment means we need to input a unique callback address in Spotter's Spotify Dashboard.
+Due to the ephemeral nature of CloudLab experiments, our site's IP address changes often. This is more of an annoyance than an issue, as each deployment means we need to input a unique callback address in Spotter's Spotify Dashboard.
 
 **Web Dev Inexperience**
 The application is currently written in vanilla JS. We are planning to refactor the application using React moving forward.
