@@ -2,7 +2,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: webapp
+<<<<<<< HEAD
   namespace: spotter 
+=======
+  namespace: spotter
+>>>>>>> e75dcefc5f0c962496e0333fd8705895b9f35c76
 spec:
   replicas: 1
   selector:
@@ -15,7 +19,11 @@ spec:
     spec:
       initContainers:
         - name: gethostname
+<<<<<<< HEAD
           image: mikec1233/spotter:minideb 
+=======
+          image: mikec1233/spotter:minideb
+>>>>>>> e75dcefc5f0c962496e0333fd8705895b9f35c76
           command: ["/bin/sh", "/scripts/get-hostname.sh"]
           volumeMounts:
             - name: headhostname
@@ -30,7 +38,11 @@ spec:
               containerPort: 3000
           command: ["/bin/sh", "-c"]
           args:
+<<<<<<< HEAD
             - "export HEAD_NODE_HOSTNAME=$(cat /data/head_node_hostname.txt) && exec npm start" 
+=======
+            - "export HEAD_NODE_HOSTNAME=$(cat /data/head_node_hostname.txt) && exec npm start"
+>>>>>>> e75dcefc5f0c962496e0333fd8705895b9f35c76
           volumeMounts:
             - name: headhostname
               mountPath: /data
@@ -40,6 +52,10 @@ spec:
         - name: headhostname-script
           configMap:
             name: headhostname-script
+<<<<<<< HEAD
+=======
+            
+>>>>>>> e75dcefc5f0c962496e0333fd8705895b9f35c76
             
 ---
 

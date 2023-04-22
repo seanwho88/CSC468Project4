@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 ---
+=======
+>>>>>>> e75dcefc5f0c962496e0333fd8705895b9f35c76
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -16,4 +19,7 @@ data:
     echo -n "$hostname" > /data/head_node_hostname.txt
 
     echo "Head node hostname: $hostname"
+<<<<<<< HEAD
 
+=======
+>>>>>>> e75dcefc5f0c962496e0333fd8705895b9f35c76
