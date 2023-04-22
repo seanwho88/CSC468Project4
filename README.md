@@ -26,7 +26,7 @@ bash /local/repository/cloud/k8s/launch_dashboard.sh
 
 
 ## Achievements 
-We take great pride in transforming an initial concept into a working prototype over the course of this semester. Additionally, we successfully designed and built a functional cloud infrastructure around our application, complete with a robust CI/CD pipeline. Throughout the spring, we acquainted ourselves with the a handful of the most popular technologies in the devops sector, including Docker, Kubernetes, and Jenkins.
+We take great pride in transforming an initial concept into a working prototype over the course of this semester. Additionally, we successfully designed and built a functional cloud infrastructure around our application, complete with a robust CI/CD pipeline (fully coming this week...). Throughout the spring, we acquainted ourselves with the a handful of the most popular technologies in the devops sector, including Docker, Kubernetes, and Jenkins.
 ## Current Challenges
 
 
