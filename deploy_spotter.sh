@@ -20,4 +20,7 @@ kubectl create -f spotter-service.yaml --namespace spotter
 echo "Creating config map"
 kubectl create -f hostnameconfig.yaml --namespace spotter
 
+echo "Creating RBAC for default permissions"
+kubectl create -f rbac.yaml --namespace spotter
+
 kubectl get pods -n spotter
