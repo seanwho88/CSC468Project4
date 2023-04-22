@@ -11,11 +11,14 @@ const cookieParser = require('cookie-parser');
 const cors = require('cors');
 
 const hn = "hostname";
+const HEAD_NODE_HOSTNAME = process.env.HEAD_NODE_HOSTNAME;
 const app = express();
 const port = 3000;
 const SPOTIFY_CLIENT_ID = '35a5e3f642214b238a5015aa91e9d9f8';
 const SPOTIFY_CLIENT_SECRET = '185026c7c8b646a382279a4ceae0bd38';
-const SPOTIFY_REDIRECT_URI = 'http://hostname:3000/callback';
+const SPOTIFY_REDIRECT_URI = `http://${HEAD_NODE_HOSTNAME}:30088/callback`;
+console.log(`HEAD_NODE_HOSTNAME: ${HEAD_NODE_HOSTNAME}`);
+
 
 const stateKey = 'spotify_auth_state';
 const bodyParser = require('body-parser');
@@ -191,10 +194,11 @@ function connectToDatabase() {
       console.log('Connected to database');
       connection.release();
       app.listen(port, () => {
-        console.log(`Server running at http://${hn}:${port}/`);
+        console.log(`Server running at http://${HEAD_NODE_HOSTNAME}:30088/`);
+	console.log("redirect uri: " + SPOTIFY_REDIRECT_URI);
+	
       });
     }
   });
 }
 connectToDatabase();
-

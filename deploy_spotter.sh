@@ -17,5 +17,7 @@ kubectl create -f spotter.yaml --namespace spotter
 echo "Creating services"
 kubectl create -f spotter-service.yaml --namespace spotter
 
+echo "Creating config map"
+kubectl create -f hostnameconfig.yaml --namespace spotter
 
 kubectl get pods -n spotter
