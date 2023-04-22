@@ -248,7 +248,7 @@ async function saveUserDataToDatabase(userData, currentSong, currentArtist, user
 
 async function fetchUsers() {
   try {
-    const response = await fetch('http://hostname:3000/api/users');
+    const response = await fetch('http://pcvm701-1.emulab.net:3000/api/users');
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }

@@ -3,7 +3,7 @@ version: '3'
 services:
   database:
     build:
-      context: ./database
+      context: ../database
       dockerfile: Dockerfile
     ports:
       - "3306:3306"
@@ -17,7 +17,7 @@ services:
 
   worker:
     build: 
-      context: ./worker
+      context: ../worker
       dockerfile: Dockerfile
     ports:
       - "5000:5000"
@@ -27,7 +27,7 @@ services:
       
   webapp:
     build: 
-      context: ./webapp
+      context: ../webapp
       dockerfile: Dockerfile
     ports:
       - "3000:3000"

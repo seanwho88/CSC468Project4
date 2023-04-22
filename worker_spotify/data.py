@@ -4,7 +4,7 @@ import string
 
 # connect to the database
 mydb = mysql.connector.connect(
-  host="mysql",
+  host="pcvm701-1.emulab.net",
   user="user",
   password="123",
   port="3306",
