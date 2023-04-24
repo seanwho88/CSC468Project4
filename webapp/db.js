@@ -1,7 +1,7 @@
 var mysql = require('mysql2');
 
 var pool = mysql.createPool({
-    host: 'pcvm701-1.emulab.net',
+    host: 'mysql',
     user: 'user',
     password: '123',
     database: 'database'
