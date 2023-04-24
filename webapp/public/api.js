@@ -3,6 +3,11 @@ const pool = require('../db');
 const geolib = require('geolib');
 const router = express.Router();
 
+//for Jenkins test, will change to actual testing later.
+function add(a, b) {
+  return a + b;
+}
+
 function getUsers(callback) {
   pool.getConnection((error, connection) => {
     if (error) throw error;
@@ -191,4 +196,7 @@ router.post('/checkUserProximity', async (req, res) => {
 
 
 
-module.exports = router;
+module.exports = {
+  router,
+  add
+};
