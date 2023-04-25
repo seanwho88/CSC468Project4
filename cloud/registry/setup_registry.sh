@@ -22,7 +22,5 @@ cd /opt/keys/auth
 docker run --rm --entrypoint htpasswd registry:2.7.0 -Bbn admin registry > htpasswd
 
 # create a template subdirectory to be mounted to pods
-mkdir -p /opt/keys/certs.d/$
-# create the certs in the shared /keys directory
-{ip_address}:443
+mkdir -p /opt/keys/certs.d/${ip_address}:443
 cp /opt/keys/certs/domain.crt /opt/keys/certs.d/${ip_address}:443/ca.crt
