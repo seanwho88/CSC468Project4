@@ -27,7 +27,6 @@ export NODE_PORT=$(kubectl get --namespace spotter -o jsonpath="{.spec.ports[0].
 export NODE_IP=$(kubectl get nodes --namespace spotter -o jsonpath="{.items[0].status.addresses[0].address}")
 echo http://$NODE_IP:$NODE_PORT/login
 
-
 ssh-keygen
-cat .ssh/id_rsa.pub >> .ssh/authorized_keys
+cat .ssh/id_rsa.pub >> .ssh/authorized_keys
 cat ~/.ssh/id_rsa
