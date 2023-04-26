@@ -9,9 +9,9 @@ chmod 400 domain.key
 cp /local/repository/cloud/registry/san.cnf.template san.cnf
 
 # In some cases we might have to switch to this to get ip address. 
-# ip_address=$(nslookup $(hostname -f) | grep Server | awk -F ' ' '{printf $2}')
+ip_address=$(nslookup $(hostname -f) | grep Server | awk -F ' ' '{printf $2}')
 
-ip_address=$(ip addr | grep eth0| awk -F ' ' '{print $2}' | awk -F '/' '{print $1'} | tail -n 1)
+#ip_address=$(ip addr | grep eth0| awk -F ' ' '{print $2}' | awk -F '/' '{print $1'} | tail -n 1)
 
 sed -i "s/IPADDR/${ip_address}/g" san.cnf
 openssl req -new -x509 -nodes -sha1 -days 365 -key domain.key -out domain.crt -config san.cnf
