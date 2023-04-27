@@ -1,0 +1,116 @@
+@import url(//fonts.googleapis.com/css?family=Lato:300:400);
+body {
+  font-family: Arial, sans-serif;
+  background-color: #111;
+  background-image: linear-gradient(to top right, rgba(58, 20, 75, 0.3) 20%, rgba(14, 45, 41, 0.3) 80%);
+  color: #fff;
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+}
+
+.main-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  flex-direction: column;
+}
+
+.welcome-container {
+  text-align: center;
+}
+
+h1 {
+  font-size: 3em;
+  margin-bottom: 20px;
+}
+
+p {
+  font-size: 1.25em;
+  margin-bottom: 30px;
+}
+
+a {
+  text-decoration: none;
+  color: #A569BD;
+  font-weight: bold;
+  font-size: 1.25em;
+  display: inline-block;
+  margin: 20px;
+  padding: 10px 20px;
+  border-radius: 5px;
+  background-color: #6C3483;
+  transition: background-color 0.3s;
+}
+
+a:hover {
+  background-color: #8E44AD;
+}
+
+.waves {
+  position: relative;
+  width: 100%;
+  height: 15vh;
+  margin-bottom: -7px;
+  /*Fix for safari gap*/
+  min-height: 100px;
+  max-height: 150px;
+  transform: scaleY(-1);
+}
+
+.content {
+  position: relative;
+  height: 20vh;
+  text-align: center;
+  background-color: white;
+}
+
+/* Animation */
+
+.parallax > use {
+  animation: move-forever 25s cubic-bezier(0.55, 0.5, 0.45, 0.5) infinite;
+  transform: scaleY(-1);
+}
+
+.parallax > use:nth-child(1) {
+  animation-delay: -2s;
+  animation-duration: 7s;
+}
+
+.parallax > use:nth-child(2) {
+  animation-delay: -3s;
+  animation-duration: 10s;
+}
+
+.parallax > use:nth-child(3) {
+  animation-delay: -4s;
+  animation-duration: 13s;
+}
+
+.parallax > use:nth-child(4) {
+  animation-delay: -5s;
+  animation-duration: 20s;
+}
+
+@keyframes move-forever {
+  0% {
+    transform: translate3d(-90px, 0, 0);
+  }
+
+  100% {
+    transform: translate3d(85px, 0, 0);
+  }
+}
+
+@media (max-width: 768px) {
+  .waves {
+    height: 40px;
+    min-height: 40px;
+  }
+
+  .content {
+    height: 60vh;
+  }
+}
+

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spotter</title>
+  <link rel="stylesheet" href="css/dashboard.css">
+  <script src="/app.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body>
+  <div>
+    <svg
+      class="waves"
+      xmlns="http://www.w3.org/2000/svg"
+      xmlns:xlink="http://www.w3.org/1999/xlink"
+      viewBox="0 24 150 28"
+      preserveAspectRatio="none"
+      shape-rendering="auto"
+      >
+      <defs>
+        <path
+          id="gentle-wave"
+          d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z"
+        />
+      </defs>
+      <g class="parallax">
+        <use
+          xlink:href="#gentle-wave"
+          x="48"
+          y="0"
+          fill="rgba(255,255,255,0.7"
+        />
+        <use
+          xlink:href="#gentle-wave"
+          x="48"
+          y="3"
+          fill="rgba(255,255,255,0.5)"
+        />
+        <use
+          xlink:href="#gentle-wave"
+          x="48"
+          y="5"
+          fill="rgba(255,255,255,0.3)"
+        />
+        <use xlink:href="#gentle-wave" x="48" y="7" fill="#fff" />
+      </g>
+    </svg>
+  </div>
+  <div id="message-container">
+    <div id="message-content">
+      <h1>FOR DEVELOPERS ONLY STOP THAT</h1>
+    </div>
+  </div>
+  <div id="main-container">
+    <div id="proximity-users-section">
+      <h2>Nearby Users</h2>
+      <div id="proximity-users"></div>
+    </div>
+  </div>
+  <div id="user-info-trigger">
+  <div id="user-info-section">
+    <div id="user-info"></div>
+    <div id="currently-playing"></div>
+    <div id="location"></div>
+  </div>
+  </div>
+  <div class="blur-overlay"></div>
+  <div id="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Username</th>
+          <th>SpotifyID</th>
+          <th>Latitude</th>
+          <th>Longitude</th>
+          <th>CurrentSong</th>
+          <th>CurrentArtist</th>
+          <th>locationOld</th>
+          <th>locationNew</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <script>
+    function showMessage() {
+  const messageContainer = document.getElementById("message-container");
+  messageContainer.style.top = "0";
+}
+
+function hideMessage() {
+  const messageContainer = document.getElementById("message-container");
+  messageContainer.style.top = "-100%";
+}
+
+const tableContainer = document.getElementById("table-container");
+
+tableContainer.addEventListener("mouseover", function () {
+  showMessage();
+});
+
+tableContainer.addEventListener("mouseout", function () {
+  hideMessage();
+});
+
+  </script>
+</body>
+</html>
