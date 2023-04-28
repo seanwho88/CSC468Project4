@@ -1,4 +1,5 @@
-agent none
+pipeline{
+    agent none
     environment {
         DOCKER_REGISTRY = "mikec1233/spotter"
         DOCKER_USER = "mikec1233"
