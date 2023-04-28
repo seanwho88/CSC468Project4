@@ -26,7 +26,6 @@ pipeline {
                     label 'deploy'
                 }
             }
-            steps {
                                   
                 }
             }
