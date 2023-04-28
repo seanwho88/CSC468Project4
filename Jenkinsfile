@@ -9,7 +9,7 @@ pipeline {
         stage('Publish') {
             agent {
                 kubernetes {
-                    inheritFrom 'webapp'
+                    inheritFrom 'mikec1233/spotter:webapp.7'
                 }
             }
             steps{
