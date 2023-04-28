@@ -26,12 +26,7 @@ pipeline {
                 }
             }
             steps {
-                sshagent(credentials: ['cloudlab']) {
-                    sh "sed -i 's/DOCKER_USER/${DOCKER_USER}/g' webapp.yaml"
-                    sh "sed -i 's/BUILD_NUMBER/${BUILD_NUMBER}/g' webapp.yaml"
-                    sh 'scp -r -v -o StrictHostKeyChecking=no *.yaml patodo@pcvm767-1.emulab.net:~/'
-                    sh 'ssh -o StrictHostKeyChecking=no patodo@pcvm767-1.emulab.net kubectl apply -f /users//webapp.yaml -n spotter'
-                    sh 'ssh -o StrictHostKeyChecking=no patodo@pcvm767-1.emulab.net kubectl apply -f /users/patodo/webapp-service.yaml -n spotter'                    
+                                  
                 }
             }
         }
