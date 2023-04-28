@@ -15,7 +15,7 @@ pipeline {
             steps {
                 container('nodejs') {
                     // Create our project directory.
-                    sh 'cp -r ${WORKSPACE}/* .'
+                    //sh 'cp -r ${WORKSPACE}/* .'
                     sh 'cd webapp/'
                     // Copy all files in our Jenkins workspace to our project directory.                
                     sh 'npm install'
