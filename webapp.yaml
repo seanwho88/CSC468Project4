@@ -24,7 +24,8 @@ spec:
               mountPath: /scripts
       containers:
         - name: webapp
-          image: mikec1233/spotter:webapp.7
+          #image: mikec1233/spotter:webapp.7
+          image: REGISTRY:443/DOCKER_APP:BUILD_NUMBER
           ports:
             - name: http-port
               containerPort: 3000
