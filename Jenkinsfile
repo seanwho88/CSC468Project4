@@ -16,11 +16,16 @@ pipeline {
                 container('nodejs') {
                     // Create our project directory.
                     //sh 'cp -r ${WORKSPACE}/* .'
-                    sh 'cd webapp/'
+                    //sh 'cd webapp/'
                     // Copy all files in our Jenkins workspace to our project directory.                
-                    sh 'npm install'
+                    //sh 'npm install'
                     // Build the app.
-                    sh 'npm start'  
+                    //sh 'npm start' 
+                    sh '''
+                    cd webapp/
+                    npm install
+                    npm start
+                    '''
                 }
             }     
         }
