@@ -6,10 +6,28 @@ pipeline {
         userid = "mikec123"
     }
     stages {
-        stage('Publish') {
+        stage('Build') {
             agent {
                 kubernetes {
                     inheritFrom 'mikec1233/spotter:webapp.7'
+                }
+            }
+            steps {
+                container('golang') {
+                    // Create our project directory.
+                    sh 'cd ${GOPATH}/src'
+                    sh 'mkdir -p ${GOPATH}/src/hello-world'
+                    // Copy all files in our Jenkins workspace to our project directory.                
+                    sh 'cp -r ${WORKSPACE}/* ${GOPATH}/src/hello-world'
+                    // Build the app.
+                    sh 'export GO111MODULE=auto; go build'  
+                }
+            }     
+        }
+        stage('Publish') {
+            agent {
+                kubernetes {
+                    inheritFrom 'docker'
                 }
             }
             steps{
