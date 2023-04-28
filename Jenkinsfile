@@ -9,18 +9,18 @@ pipeline {
         stage('Build') {
             agent {
                 kubernetes {
-                    inheritFrom 'mikec1233/spotter:webapp.7'
+                    inheritFrom 'nodejs'
                 }
             }
             steps {
-                container('golang') {
+                container('nodejs') {
                     // Create our project directory.
-                    sh 'cd ${GOPATH}/src'
-                    sh 'mkdir -p ${GOPATH}/src/hello-world'
+                    sh 'cp -r ${WORKSPACE}/* .'
+                    sh 'cd webapp/'
                     // Copy all files in our Jenkins workspace to our project directory.                
-                    sh 'cp -r ${WORKSPACE}/* ${GOPATH}/src/hello-world'
+                    sh 'npm install'
                     // Build the app.
-                    sh 'export GO111MODULE=auto; go build'  
+                    sh 'npm start'  
                 }
             }     
         }
@@ -31,7 +31,7 @@ pipeline {
                 }
             }
             steps{
-                container('webapp') {
+                container('docker') {
                     sh 'docker login -u admin -p registry https://${registry}:443'
                     sh 'docker build -t ${registry}:443/webapp:$BUILD_NUMBER .'
                     sh 'docker push ${registry}:443/webapp:$BUILD_NUMBER'
