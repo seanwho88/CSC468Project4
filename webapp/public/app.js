@@ -341,5 +341,5 @@ function updateSong(userSpotifyID, accessToken) {
 }
 
 
-checkProximityForAllUsers();
-setInterval(checkProximityForAllUsers, 5000);
+//checkProximityForAllUsers();
+//setInterval(checkProximityForAllUsers, 5000);
