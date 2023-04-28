@@ -764,6 +764,21 @@ agent:
   # controller.JCasC.defaultConfig: true
   # Best reference is https://<jenkins_url>/configuration-as-code/reference#Cloud-kubernetes. The example below creates a python pod template.
   podTemplates: 
+    nodejs: |
+      - name: nodejs
+        label: jenkins-nodejs
+        serviceAccount: jenkins
+        containers:
+          - name: nodejs
+            image: node:14  # Choose the Node.js Docker image version that suits your needs.
+            command: "/bin/sh -c"
+            args: "cat"
+            ttyEnabled: true
+            privileged: true
+            resourceRequestCpu: "400m"
+            resourceRequestMemory: "512Mi"
+            resourceLimitCpu: "1"
+            resourceLimitMemory: "1024Mi"
     python: |
       - name: python
         label: jenkins-python
