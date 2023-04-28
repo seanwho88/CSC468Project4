@@ -13,7 +13,7 @@ pipeline {
                 }
             }
             steps{
-                container('docker') {
+                container('webapp') {
                     sh 'docker login -u admin -p registry https://${registry}:443'
                     sh 'docker build -t ${registry}:443/webapp:$BUILD_NUMBER .'
                     sh 'docker push ${registry}:443/webapp:$BUILD_NUMBER'
