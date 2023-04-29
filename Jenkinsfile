@@ -2,7 +2,7 @@ pipeline {
     agent none 
     environment {
         docker_app = "webapp"
-        registry = "155.98.37.79"
+        registry = "155.98.37.37"
         userid = "mikec123"
     }
     stages {
