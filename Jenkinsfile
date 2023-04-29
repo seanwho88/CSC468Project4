@@ -1,23 +1,40 @@
-pipeline{
-    agent none
+pipeline {
+    agent none 
     environment {
-        DOCKER_REGISTRY = "mikec1233/spotter"
-        DOCKER_USER = "mikec1233"
+        docker_app = "database"
+        registry = "155.98.37.37"
+        userid = "mikec123"
     }
     stages {
-        stage('Build') {
-            steps {
-                script {
-                    def customImage = docker.build("${DOCKER_REGISTRY}:database", "--file ./Dockerfile .")
-                    customImage.push()
+        stage('Publish') {
+            agent {
+                kubernetes {
+                    inheritFrom 'docker'
+                }
+            }
+            steps{
+                container('docker') {
+                    sh 'docker login -u admin -p registry https://${registry}:443'
+                    sh 'docker build -t ${registry}:443/database:$BUILD_NUMBER database/'
+                    sh 'docker push ${registry}:443/database:$BUILD_NUMBER'
                 }
             }
         }
-        stage('Deploy') {
+        stage ('Deploy') {
+            agent {
+                node {
+                    label 'deploy'
+                }
+            }
             steps {
-                sh "sed -i 's/DOCKER_USER/${DOCKER_USER}/g' database.yaml"
-                sh "kubectl apply -f database.yaml"
-                sh "kubectl apply -f database-service.yaml"
+                sshagent(credentials: ['cloudlab']) {
+                    sh "sed -i 's/REGISTRY/${registry}/g' database.yaml"
+                    sh "sed -i 's/DOCKER_APP/${docker_app}/g' database.yaml"
+                    sh "sed -i 's/BUILD_NUMBER/${BUILD_NUMBER}/g' database.yaml"
+                    sh 'scp -r -v -o StrictHostKeyChecking=no *.yaml ${userid}@${registry}:~/'
+                    sh 'ssh -o StrictHostKeyChecking=no ${userid}@${registry} kubectl apply -f /users/${userid}/database.yaml --namespace spotter'
+                    sh 'ssh -o StrictHostKeyChecking=no ${userid}@${registry} kubectl apply -f /users/${userid}/database-service.yaml --namespace spotter'                                        
+                }                  
             }
         }
     }
