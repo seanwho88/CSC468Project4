@@ -6,7 +6,7 @@ pipeline {
         userid = "mikec123"
     }
     stages {
-        stage('Build') {
+        stage('Test') {
             agent {
                 kubernetes {
                     inheritFrom 'nodejs'
@@ -14,17 +14,10 @@ pipeline {
             }
             steps {
                 container('nodejs') {
-                    // Create our project directory.
-                    //sh 'cp -r ${WORKSPACE}/* .'
-                    //sh 'cd webapp/'
-                    // Copy all files in our Jenkins workspace to our project directory.                
-                    //sh 'npm install'
-                    // Build the app.
-                    //sh 'npm start' 
                     sh '''
                     cd webapp/
                     npm install
-                    npm start
+                    npm test
                     '''
                 }
             }     
@@ -58,8 +51,7 @@ pipeline {
                     sh 'ssh -o StrictHostKeyChecking=no ${userid}@${registry} kubectl apply -f /users/${userid}/webapp.yaml'
                     sh 'ssh -o StrictHostKeyChecking=no ${userid}@${registry} kubectl apply -f /users/${userid}/webapp-service.yaml'                                        
                 }                  
-                }
             }
         }
     }
-
+}
