@@ -12,6 +12,8 @@ spec:
       labels:
         app: mysql
     spec:
+      imagePullSecrets:
+      - name: regcred
       containers:
       - name: mysql
         image: mikec1233/spotter:database
