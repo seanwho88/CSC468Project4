@@ -29,7 +29,8 @@ async function getCurrentLocation(userSpotifyID) {
       const lat = position.coords.latitude;
       const lon = position.coords.longitude;
       const user = userSpotifyID;
-      document.getElementById('location').innerHTML = `Current Location: Latitude ${lat}, Longitude ${lon} for user ${user}`;
+      //document.getElementById('location').innerHTML = `Your Nest is UNA 125! Current Location: Latitude ${lat}, Longitude ${lon} for user ${user}`;
+      document.getElementById('location').innerHTML = `<h2>Your Nest is UNA 125!</h2>`;
 
       const callback = async () => {
         const users = await fetchUsers();
@@ -96,8 +97,22 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
+/* function populateUserList(users) {
+  const tbody = document.querySelector('tbody');
+  tbody.innerHTML = ''; // Clear the existing table body
+
+  users.forEach(user => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${user.id}</td><td>${user.Username}</td><td>${user.SpotifyID}</td><td>${user.Latitude}</td><td>${user.Longitude}</td><td>${user.CurrentSong}</td><td>${user.CurrentArtist}</td><td>${user.locationOld}</td><td>${user.locationNew}</td>`;
+    tbody.appendChild(tr);
+  });
+} */
 function populateUserList(users) {
   const tbody = document.querySelector('tbody');
+  if (!tbody) { // Check if tbody exists
+    console.log("No 'tbody' element found on this page.");
+    return; // Exit the function
+  }
   tbody.innerHTML = ''; // Clear the existing table body
 
   users.forEach(user => {
@@ -110,30 +125,35 @@ function populateUserList(users) {
 
 
 
+
 function updateUserInfo(data) {
   const userInfoDiv = document.getElementById('user-info');
   userInfoDiv.innerHTML = `
-    <h2>User Information</h2>
-    <p>ID: ${data.id}</p>
-    <p>Display Name: ${data.display_name}</p>
-    <p>Email: ${data.email}</p>
-    <p>Country: ${data.country}</p>
+    <h2>User Information:</h2>
+    <h2>ID: ${data.id}</h2>
+    <h2>Display Name: ${data.display_name}</h2>
+    <h2>Email: ${data.email}</h2>
+ 
   `;
 }
 
 function updateCurrentlyPlaying(data) {
   const currentlyPlayingDiv = document.getElementById('currently-playing');
   if (data.is_playing) {
-    currentlyPlayingDiv.innerHTML = `
-      <h2>Currently Playing</h2>
-      <p>Track: ${data.item.name}</p>
-      <p>Artist: ${data.item.artists[0].name}</p>
-      <p>Album: ${data.item.album.name}</p>
+    currentlyPlayingDiv.innerHTML = `<style>
+    h2 {
+        margin-bottom: 20px; /* Adjust as needed */
+    }
+</style>
+      <h2>Currently Playing:</h2>
+      <h2>Track: ${data.item.name}</h2>
+      <h2>Artist: ${data.item.artists[0].name}</h2>
+      <h2>Album: ${data.item.album.name}</h2>
     `;
   } else {
     currentlyPlayingDiv.innerHTML = `
       <h2>Currently Playing</h2>
-      <p>No track is currently playing.</p>
+      <h2>No track is currently playing.</h2>
     `;
   }
 }
@@ -281,14 +301,12 @@ async function checkUserProximity(Latitude, Longitude, SpotifyID, CurrentSong, C
       if (data.isWithinProximity) {
         if (!existingUserDiv) {
           userDiv.innerHTML = `
-            <h3>User: ${SpotifyID}</h3>
-            <p>Currently playing: ${currentlyPlayingText}</p>
+            <h2>${SpotifyID} is currently listening to ${currentlyPlayingText}</h2>
           `;
           proximityUsersDiv.appendChild(userDiv);
         } else {
           existingUserDiv.innerHTML = `
-            <h3>User: ${SpotifyID}</h3>
-            <p>Currently playing: ${currentlyPlayingText}</p>
+          <h2>${SpotifyID} is currently listening to ${currentlyPlayingText}</h2>
           `;
         }
       } else {
