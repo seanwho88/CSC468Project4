@@ -16,7 +16,7 @@ spec:
       - name: regcred
       containers:
       - name: mysql
-        image: mikec1233/spotter:database
+        image: REGISTRY:443/DOCKER_APP:BUILD_NUMBER
         ports:
           - name: http-port
             containerPort: 3306
