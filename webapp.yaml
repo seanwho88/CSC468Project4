@@ -1,8 +1,9 @@
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: webapp
-  namespace: spotter 
+  namespace: spotter
 spec:
   replicas: 1
   selector:
@@ -13,10 +14,14 @@ spec:
       labels:
         app: webapp
     spec:
+      imagePullSecrets:
+        - name: regcred
       initContainers:
         - name: gethostname
-          image: mikec1233/spotter:minideb 
-          command: ["/bin/sh", "/scripts/get-hostname.sh"]
+          image: mikec1233/spotter:minideb
+          command:
+            - /bin/sh
+            - /scripts/get-hostname.sh
           volumeMounts:
             - name: headhostname
               mountPath: /data
@@ -24,14 +29,16 @@ spec:
               mountPath: /scripts
       containers:
         - name: webapp
-          #image: mikec1233/spotter:webapp.7
           image: REGISTRY:443/DOCKER_APP:BUILD_NUMBER
           ports:
             - name: http-port
               containerPort: 3000
-          command: ["/bin/sh", "-c"]
+          command:
+            - /bin/sh
+            - -c
           args:
-            - "export HEAD_NODE_HOSTNAME=$(cat /data/head_node_hostname.txt) && exec npm start" 
+            - export HEAD_NODE_HOSTNAME=$(cat /data/head_node_hostname.txt) &&
+              exec npm start
           volumeMounts:
             - name: headhostname
               mountPath: /data
