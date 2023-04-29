@@ -16,7 +16,7 @@ spec:
       - name: regcred
       containers:
       - name: worker
-        image: mikec1233/spotter:worker
+        image: REGISTRY:443/DOCKER_APP:BUILD_NUMBER
         ports:
           - name: http-port
             containerPort: 5000
