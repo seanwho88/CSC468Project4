@@ -2,12 +2,13 @@
 /* Dashboard styles */
 body {
     font-family: Arial, sans-serif;
-    background-color: #111;
-    background-image: linear-gradient(to top right, rgba(58, 20, 75, 0.3) 20%, rgba(14, 45, 41, 0.3) 80%);
-    color: rgb(28, 106, 102);
-    text-shadow: 0px 2px 2px #0a0d17;
+    background-color: rgb(229, 165, 113);
+    background-image: linear-gradient(to top right, rgba(150, 36, 36, 0.3) 20%, rgba(242, 136, 180, 0.3) 80%);
+    color: rgb(163, 96, 178);
     margin: 0;
     padding: 0;
+    font-size: large;
+    font-weight: bold;
   }
   .blur-overlay {
     position: fixed;
@@ -21,6 +22,40 @@ body {
     transition: opacity 0.3s;
     pointer-events: none; /* To make sure clicks pass through the overlay */
   }
+
+  #logo-container {
+    position: relative;
+  }
+  
+  #logo-container img:first-child {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+  
+  #logo-container img:last-child {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+
+  #nest {
+    position: absolute;
+    top: 18%;
+    left: 0;
+    right: 0;
+    text-align: center;
+    
+  }
+  
+  #nest h1 {
+    font-size: 8rem;
+
+  }
+  #nest h2{
+    font-size: 3rem;
+  }
+  
   
   #main-container {
     display: flex;
@@ -32,7 +67,9 @@ body {
   #proximity-users-section {
     flex: 1;
     max-width: 60%;
-    text-align: center;
+    text-align: left;
+    /* position: absolute;
+    left: 50px; */
     position: relative;
   }
   #user-info-trigger {
@@ -47,23 +84,25 @@ body {
   #user-info-section {
     position: fixed;
     top: 0;
-    right: -300px;
-    width: 300px;
+    right: -600px;
+    width: 600px;
     height: 100%;
     padding: 20px;
-    background-color: rgba(0, 0, 0, 0.7);
-    box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.2);
+    background-color: rgba(197, 78, 108, 0.7);
+    box-shadow: 0px 3px 15px rgba(132, 77, 80, 0.2);
     border-top-left-radius: 5px;
     border-bottom-left-radius: 5px;
     transition: right 0.3s ease;
-    opacity: .1;
+    opacity: 1;
+
   }
   
-  h2 {
+  h2{
     margin-bottom: 10px;
-    color: #A569BD;
+    color: #361344;
     font-family: 'Roboto Mono', monospace;
-    text-shadow: 0px 0px 5px #A569BD;
+    font-weight: bold;
+    font-size: medium;
   }
   
   #proximity-users-section:before {
@@ -73,7 +112,7 @@ body {
     right: 0;
     bottom: 0;
     left: 0;
-    background: radial-gradient(at center, rgba(75, 30, 120, 0.2) 30%, rgba(14, 45, 41, 0.2) 80%);
+    background: radial-gradient(at center, rgba(255, 230, 222, 0.2) 30%, rgba(255, 243, 232, 0.2) 80%);
     z-index: -1;
     border-radius: 10px;
   }
@@ -85,7 +124,7 @@ body {
     right: 0;
     bottom: 0;
     left: 0;
-    background: radial-gradient(at center, rgba(58, 20, 75, 0.2) 30%, rgba(14, 45, 41, 0.2) 80%);
+    /*background: radial-gradient(at center, rgba(255, 255, 135, 0.308) 30%, rgba(255, 250, 239, 0.175) 80%);*/
     z-index: -1;
     border-radius: 10px;
   }
