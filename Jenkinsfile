@@ -1,21 +1,22 @@
 pipeline {
     agent none 
     environment {
-        docker_registry = 'mikec1233/spotter'
-        docker_user =  'mikec1233'
+        docker_app = "worker"
+        registry = "155.98.37.37"
+        userid = "mikec123"
     }
     stages {
         stage('Publish') {
             agent {
                 kubernetes {
-                    inheritFrom 'worker'
+                    inheritFrom 'docker'
                 }
             }
             steps{
                 container('docker') {
-                    sh 'echo $DOCKER_TOKEN | docker login --username $DOCKER_USER --password-stdin'
-                    sh 'docker build -t $DOCKER_REGISTRY:worker-$BUILD_NUMBER ./worker'
-                    sh 'docker push $DOCKER_REGISTRY:worker-$BUILD_NUMBER'
+                    sh 'docker login -u admin -p registry https://${registry}:443'
+                    sh 'docker build -t ${registry}:443/database:$BUILD_NUMBER worker/'
+                    sh 'docker push ${registry}:443/database:$BUILD_NUMBER'
                 }
             }
         }
@@ -27,12 +28,13 @@ pipeline {
             }
             steps {
                 sshagent(credentials: ['cloudlab']) {
-                    sh "sed -i 's/DOCKER_USER/${DOCKER_USER}/g' worker.yaml"
+                    sh "sed -i 's/REGISTRY/${registry}/g' worker.yaml"
+                    sh "sed -i 's/DOCKER_APP/${docker_app}/g' worker.yaml"
                     sh "sed -i 's/BUILD_NUMBER/${BUILD_NUMBER}/g' worker.yaml"
-                    sh 'scp -r -v -o StrictHostKeyChecking=no *.yaml zs947869@pcvm709-1.emulab.net:~/'
-                    sh 'ssh -o StrictHostKeyChecking=no zs947869@pcvm709-1.emulab.net kubectl apply -f /users/zs947869/worker.yaml -n spotter'
-                    sh 'ssh -o StrictHostKeyChecking=no zs947869@pcvm709-1.emulab.net kubectl apply -f /users/zs947869/worker-service.yaml -n spotter'                    
-                }
+                    sh 'scp -r -v -o StrictHostKeyChecking=no *.yaml ${userid}@${registry}:~/'
+                    sh 'ssh -o StrictHostKeyChecking=no ${userid}@${registry} kubectl apply -f /users/${userid}/worker.yaml --namespace spotter'
+                    sh 'ssh -o StrictHostKeyChecking=no ${userid}@${registry} kubectl apply -f /users/${userid}/worker-service.yaml --namespace spotter'                                        
+                }                  
             }
         }
     }
