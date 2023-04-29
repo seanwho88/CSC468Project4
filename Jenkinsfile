@@ -15,8 +15,8 @@ pipeline {
             steps{
                 container('docker') {
                     sh 'docker login -u admin -p registry https://${registry}:443'
-                    sh 'docker build -t ${registry}:443/database:$BUILD_NUMBER worker/'
-                    sh 'docker push ${registry}:443/database:$BUILD_NUMBER'
+                    sh 'docker build -t ${registry}:443/worker:$BUILD_NUMBER worker/'
+                    sh 'docker push ${registry}:443/worker:$BUILD_NUMBER'
                 }
             }
         }
