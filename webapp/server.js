@@ -16,7 +16,7 @@ const app = express();
 const port = 30088;
 const SPOTIFY_CLIENT_ID = '35a5e3f642214b238a5015aa91e9d9f8';
 const SPOTIFY_CLIENT_SECRET = '185026c7c8b646a382279a4ceae0bd38';
-const SPOTIFY_REDIRECT_URI = `http://${HEAD_NODE_HOSTNAME}:3000/callback`;
+const SPOTIFY_REDIRECT_URI = `http://${HEAD_NODE_HOSTNAME}:${port}/callback`;
 //console.log(`HEAD_NODE_HOSTNAME: ${HEAD_NODE_HOSTNAME}`);
 
 
@@ -194,7 +194,7 @@ function connectToDatabase() {
       console.log('Connected to database');
       connection.release();
       app.listen(port, () => {
-        console.log(`Server running at ${HEAD_NODE_HOSTNAME}:3000/`);
+        console.log(`Server running at ${HEAD_NODE_HOSTNAME}:${port}/`);
 	console.log("redirect uri: " + SPOTIFY_REDIRECT_URI);
 	
       });
