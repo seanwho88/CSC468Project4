@@ -12,6 +12,8 @@ spec:
       labels:
         app: worker
     spec:
+      imagePullSecrets:
+      - name: regcred
       containers:
       - name: worker
         image: mikec1233/spotter:worker
