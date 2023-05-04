@@ -49,7 +49,7 @@ The application is currently written in vanilla JS. We are planning to refactor 
 - [@AyalaBrianna](https://github.com/AyalaBrianna)
 - [@seanwho88](https://github.com/seanwho88)
 - [@Smith2230](https://github.com/Smith2230)
-- [@DRockwell0](https://github.com/DRockwell0) 
+- [@DRockwell0](https://github.com/DRockwell0) -- [@linkedin](https://www.linkedin.com/in/david-rockwell-83b49222b/)
 - [@mikec1233](https://github.com/mikec1233) -- [@linkedin](https://www.linkedin.com/in/michael-collins-b27760223/)
 
 
