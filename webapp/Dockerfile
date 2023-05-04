@@ -6,8 +6,6 @@ COPY package*.json ./
 
 RUN npm install
 
-RUN npm install --save mysql2
-
 RUN npm install mysql2@latest --save
 
 COPY . .
