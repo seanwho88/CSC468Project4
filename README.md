@@ -1,5 +1,5 @@
 
-# WCU CSC468 Group 4 "Spotter"
+# WCU CSC468 Group 4 "Nest"
 
 Spotter is a cloud-based music sharing web application that allows users to connect with others who share their musical interests. The app utilizes real-time geolocation to find other users in proximity and display the music they are currently listening to.
 
